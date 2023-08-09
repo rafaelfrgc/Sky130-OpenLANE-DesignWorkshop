@@ -47,7 +47,7 @@ OpenLANE is an open-source digital design flow that is used to produce clean GDS
 
 The OpenLANE ASIC design flow is based on the following steps:
 
-<!-- Add OpenLANE chart image -->
+![OpenLANE chart] (https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/OpenLANEFlowChart.png)
 
 1. RTL Synthesis: The RTL code is converted to a gate-level netlist using Yosys, which is an open-source synthesis tool. Also, abc is used to perform technology mapping, which is the process of mapping the logic gates to the standard cells of the PDK.
 
@@ -103,11 +103,11 @@ After synthesis completes, a "runs" folder is generated in the picorv32a design 
 
 ```picorv32a/runs/<timestamp>/logs/synthesis```
 
-<!-- Add Synthesis folder -->
+![Synthesis log location] (https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/SynthesisLogLocation.png) 
 
 To calculate the flop ratio, 
 
-<!-- Add Synthesis log -->
+![Synthesis log] (https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/SynthesisLog.png)
 
 ```
 Flop ratio = Number of D Flip flops 
