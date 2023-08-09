@@ -99,4 +99,24 @@ package require openlane 0.9
 prep -design picorv32a
 run_synthesis
 ```
+After synthesis completes, a "runs" folder is generated in the picorv32a design folder, which contains the synthesis results. The log files containing the results are located in the following folder:
 
+```picorv32a/runs/<timestamp>/logs/synthesis```
+
+<!-- Add Synthesis folder -->
+
+To calculate the flop ratio, 
+
+<!-- Add Synthesis log -->
+
+```
+Flop ratio = Number of D Flip flops 
+             ______________________
+             Total Number of cells
+```
+
+```
+dfxtp_2 = 1613,
+Number of cells = 16885,
+Flop ratio = 1613/16885 = 9.55%
+```
