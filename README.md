@@ -91,4 +91,12 @@ The OpenLANE directory structure is as follows:
 
 ### Synthesis
 
+First, OpenLANE is started and the picorv32a design files are prepped and synthesized using the following commands:
+
+```
+./flow.tcl -interactive
+package require openlane 0.9
+prep -design picorv32a
+run_synthesis
+```
 
