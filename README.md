@@ -194,7 +194,7 @@ To run floorplan in OpenLANE, the following command is used:
 
 ```run_floorplan```
 
-![FloorplanningRunVM](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/FloorplanningRunVM.png)
+![FloorplanningRunVM](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day2/Images/FloorplanningRunVM.png)
 
 After completing the floorplan step, a .def file will have been created in the ```results/floorplan``` directory.
 
@@ -212,11 +212,11 @@ Magic basic controls are as follows:
 * To pan, use the ```p``` key and then click and drag the mouse 
 * The ```v``` key is used to select a particular layer
 
-![MagicFloorplanTopView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/MagicFloorplanTopView.png)
+![MagicFloorplanTopView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day2/Images/MagicFloorplanTopView.png)
 
 The standard cells are not placement during this stage, but they can be seen in the black boxes in the bottom left corner. It is also possible to see the decoupling capacitors:
 
-![MagicFloorplanDecapView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/MagicFloorplanDecapView.png)
+![MagicFloorplanDecapView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day2/Images/MagicFloorplanDecapView.png)
 
 
 ## Placement in OpenLANE and view in Magic
@@ -244,11 +244,11 @@ Which, in this case, is:
 
 In magic,
 
-![GlobalPlacementTopView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/GlobalPlacementTopView.png)
+![GlobalPlacementTopView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day2/Images/GlobalPlacementTopView.png)
 
 Zooming in,
 
-![GlobalPlacementZoomedView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/GlobalPlacementZoomedView.png)
+![GlobalPlacementZoomedView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day2/Images/GlobalPlacementZoomedView.png)
 
 Note that power distribution network generation (PDN) is usually a part of the floorplan step. However, in the OpenLANE flow, floorplan does not generate PDN. The steps are - floorplan, placement CTS and then PDN.
 
@@ -297,10 +297,10 @@ Once these steps have been completed, GUNA software generates timing, noise, and
 
 The following variables are threshold voltages used in the timing characterization of a standard cell, such as a buffer containing two inverters back-to-back. They are used to define the voltage levels at which a signal is considered to have transitioned from one logic state to another. These thresholds are typically defined as a percentage of the power supply voltage.
 
-- `slew_low_rise_thr` and `slew_high_rise_thr` are used to measure the rise time (or slew rate) of a rising signal. The rise time is measured between the `slew_low_rise_thr` and `slew_high_rise_thr` voltage levels.
-- `slew_low_fall_thr` and `slew_high_fall_thr` are used to measure the fall time (or slew rate) of a falling signal. The fall time is measured between the `slew_low_fall_thr` and `slew_high_fall_thr` voltage levels.
-- `in_rise_thr` and `in_fall_thr` are used to measure the delay of a rising or falling input signal, respectively. The delay is measured from the point at which the input signal crosses the `in_rise_thr` or `in_fall_thr` voltage level.
-- `out_rise_thr` and `out_fall_thr` are used to measure the delay of a rising or falling output signal, respectively. The delay is measured from the point at which the output signal crosses the `out_rise_thr` or `out_fall_thr` voltage level.
+- `slew_low_rise_thr` (20% Typically) and `slew_high_rise_thr` (80% Typically) are used to measure the rise time (or slew rate) of a rising signal. The rise time is measured between the `slew_low_rise_thr` and `slew_high_rise_thr` voltage levels.
+- `slew_low_fall_thr` (20% Typically) and `slew_high_fall_thr` (80% Typically) are used to measure the fall time (or slew rate) of a falling signal. The fall time is measured between the `slew_low_fall_thr` and `slew_high_fall_thr` voltage levels.
+- `in_rise_thr` (50% Typically) and `in_fall_thr` (50% Typically) are used to measure the delay of a rising or falling input signal, respectively. The delay is measured from the point at which the input signal crosses the `in_rise_thr` or `in_fall_thr` voltage level.
+- `out_rise_thr` (50% Typically) and `out_fall_thr` (50% Typically) are used to measure the delay of a rising or falling output signal, respectively. The delay is measured from the point at which the output signal crosses the `out_rise_thr` or `out_fall_thr` voltage level.
 
 ##### Propagation delay 
 
@@ -313,6 +313,29 @@ Having a negative delay is not physically possible and indicates an error in the
 The transition time, also known as the slew rate, is the time it takes for a signal to transition from one logic state to another. It is characterized by measuring the rise time and fall time of the signal. The rise time is measured between the slew_low_rise_thr and slew_high_rise_thr voltage levels, while the fall time is measured between the slew_low_fall_thr and slew_high_fall_thr voltage levels.
 
 The transition time is an important parameter in digital circuit design, as it affects the maximum operating frequency of the circuit. A slower transition time can result in longer propagation delays, which can limit the maximum operating frequency of the circuit. On the other hand, a faster transition time can result in increased power consumption and electromagnetic interference.
+
+#### Output
+
+Typically the output of the cell design flow consists of the following files:
+
+- CDL (Circuit Description Language): This file describes the circuit's netlist in a human-readable text format. It includes information about the circuit's components, such as transistors, resistors, and capacitors, as well as their interconnections. The CDL file is used by simulation tools to verify the behavior of the circuit.
+
+- LEF (Library Exchange Format): This file describes the physical layout of the cell in a human-readable text format. It includes information about the cell's size, shape, and pin locations, as well as the layers and geometries used to construct the cell. The LEF file is used by place-and-route tools to integrate the cell into a larger chip design.
+
+- GDSII (Graphic Data System II): This file describes the geometric shapes and text labels used to represent the cell's layout in a binary format. It is used by mask-making tools to create photomasks for manufacturing the cell.
+
+- Extracted SPICE netlist (.cir): This file describes the circuit's netlist in a human-readable text format, including parasitic capacitances and resistances extracted from the layout. It is used by simulation tools to verify the behavior of the circuit, taking into account the effects of parasitics.
+
+- Timing, noise, and power .lib files: These files describe the cell's timing, noise, and power characteristics in a human-readable text format. They include information about the cell's input and output capacitances, transition times, propagation delays, and power consumption. These files are used by static timing analysis tools to verify that the circuit meets its timing requirements and by power analysis tools to estimate its power consumption.
+
+# Day 3 - Design of library cells using Magic Layout and ngspice characterization
+
+## Labs for CMOS inverter ngspice simulations
+
+
+
+
+
 
 
 
