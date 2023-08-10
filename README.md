@@ -173,3 +173,148 @@ After the pins have been placed, logical placement blocking of pre-placed macros
 
 ### Floorplanning in OpenLANE and view in Magic
 
+* In the floorplanning stage, in the configuration file, there are .tcl files related to each of the steps in the flow. In these files, the values of the variables are defined. The values of these variables can be changed to change the values of the parameters in the flow. The order of importance of files is as follows:
+
+1. ```sky130A_sky130_fd_sc_hd_config.tcl``` - System default envrionment variables
+2. ```config.tcl```
+3. ```floorplan.tcl```
+
+* For Floorplan envrionment variables or switches speciffically:
+
+1. ```FP_CORE_UTIL``` - Floorplan core utilization factor
+2. ```FP_ASPECT_RATIO``` - Floorpan aspect ratio
+3. ```FP_CORE_MARGIN``` - Core to die margin area
+4. ```FP_IO_MODE``` - Defines pin configurations (1 = equidistant/0 = not equidistant)
+5. ```FP_CORE_VMETAL``` - Vertical metal layer, which is the metal layer used for power distribution
+6. ```FP_CORE_HMETAL``` - Horizontal metal layer, which is the metal layer used for ground distribution
+
+***Usually, vertical metal layer and horizontal metal layer values will be 1 more than that specified in the files***
+
+To run floorplan in OpenLANE, the following command is used:
+
+```run_floorplan```
+
+![FloorplanningRunVM](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/FloorplanningRunVM.png)
+
+After completing the floorplan step, a .def file will have been created in the ```results/floorplan``` directory.
+
+For viewing the .def file, we use Magic, which is a VLSI layout tool. To view the .def file, we use the following command:
+
+```magic -T <magic tech file> lef read <lef file> def read <def file> &```
+
+So, in this case:
+
+```magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.min.lef def read picorv32a.floorplan.def &```
+
+Magic basic controls are as follows:
+
+* To zoom in and out, use the ```z``` key and then click and drag the mouse 
+* To pan, use the ```p``` key and then click and drag the mouse 
+* The ```v``` key is used to select a particular layer
+
+![MagicFloorplanTopView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/MagicFloorplanTopView.png)
+
+The standard cells are not placement during this stage, but they can be seen in the black boxes in the bottom left corner. It is also possible to see the decoupling capacitors:
+
+![MagicFloorplanDecapView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/MagicFloorplanDecapView.png)
+
+
+## Placement in OpenLANE and view in Magic
+
+### Library binding and placement
+
+A library contains informations about the physical cells available for use in the design. It contains information about the height, width, and other physical characteristics of each cell. It also contains information about the logical function of each cell, which is used during the binding process. In library there may also have an option similar cells (with same functionality) but with different heights and widths, which may be chosen according to our space available.
+
+The process of binding a netlist with physical cells involves taking the logical representation of the design, as described in the netlist, and mapping it to the physical cells available in the library. This is typically done during the placement stage of the physical design flow. During this stage, the placement tool takes the netlist as input and uses the information contained in the library to select the appropriate physical cells for each logic gate or other component in the design. The tool then places these physical cells on the chip, optimizing their placement based on estimated wire length, signal integrity, and other factors. In the case that the distances between the cells are too large, the tool may also insert buffer cells to reduce the wire length, this is done to reduce the delay and preserve signal integrity.
+
+#### Placement in OpenLANE using RePLace
+
+In OpenLANE, the placement tool used is RePLace. To run placement in OpenLANE, the following command is used:
+
+```run_placement```
+
+In this stage, global placement is performed, which is a rough placement of the cells optmizing for wire length. The output of this stage is a .def file, which can be viewed in Magic, using the following command:
+
+```magic -T <magic tech file> lef read <lef file> def read <def file> &```
+
+Which, in this case, is:
+
+```magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.min.lef def read picorv32a.placement.def &```
+
+
+In magic,
+
+![GlobalPlacementTopView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/GlobalPlacementTopView.png)
+
+Zooming in,
+
+![GlobalPlacementZoomedView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/GlobalPlacementZoomedView.png)
+
+Note that power distribution network generation (PDN) is usually a part of the floorplan step. However, in the OpenLANE flow, floorplan does not generate PDN. The steps are - floorplan, placement CTS and then PDN.
+
+## Cell design and characterization flows
+
+Standard cells are pre-designed and pre-characterized digital and analog circuit components that designers can use to create their designs. These cells are the building blocks of system-on-chip (SoC) designs and include logic gates, input/output (I/O) cells, memory compilers, and other components.
+
+A standard cell library is a collection of these standard cells, along with other files required by the place-and-route (PnR) tool for automatic placement and routing. The library contains cells with multi-drive strength and multi-threshold voltage, as well as physical-only cells. The standard cells in the library are well-defined, pre-characterized, and free from any design rule check (DRC) violations. 
+
+### Inputs
+
+To start a cell design flow, PDKs, DRC and LVS rules and SPICE models  given from the foundry are needed. Also, library and user-defined specs are taken into account.
+
+### Design steps
+
+#### Circuit design
+
+The circuit design step that comes before layout design is typically schematic capture. Schematic capture is the process of creating a schematic diagram that represents the circuit’s connectivity and functionality. During this step, designers use a schematic capture tool to create a visual representation of the circuit, using symbols to represent components and wires to represent connections between them. Once the schematic has been completed and validated, the design can move on to the layout stage, where the physical placement of components and routing of interconnect wires is determined
+
+#### Layout design
+
+In the context of layout design in chip design flow, NMOS and PMOS graphs are used to represent the connectivity between transistors in a circuit. These graphs are created by representing each transistor as a vertex and connecting vertices with edges to represent the connections between transistors. NMOS and PMOS graphs are used to analyze the connectivity of the circuit and to determine an efficient placement of transistors that minimizes wire length and routing congestion.
+
+Euler’s path is a concept from graph theory that refers to a path through a graph that visits every edge exactly once. In the context of layout design, Euler’s path can be used to determine an efficient placement of transistors on the chip. By finding an Euler path through the NMOS and PMOS graphs, designers can determine an ordering of transistors that minimizes wire length and routing congestion. Based on Euler's path a stick diagram is a simplified layout form that contains information related to each of the process steps but does not contain the actual size of individual features. The purpose of a stick diagram is to provide the designer with a good understanding of topological constraints and to quickly test several possibilities for optimum layout without actually drawing a complete mask diagram. Stick diagrams can easily be drawn by hand and are a handy intermediate form between circuit diagrams and physical layouts since they can easily be modified and corrected. They can therefore be used to anticipate and avoid possible problems when laying out a circuit.
+
+Following, transistor sizing is another important step in chip design. It involves analyzing the circuit to determine the drive strength required for each transistor and selecting the appropriate size from the available options in the standard cell library. Transistor sizing can affect the performance and reliability of a chip, so it is important to carefully analyze and optimize transistor sizes during chip design.
+
+After transistor sizing, placement, and routing are completed, design rule checking (DRC) is performed to ensure that no errors occurred during these steps. DRC verifies that all design rules have been followed and that there are no violations related to spacing, connections, vias, etc. Also, a SPICE netlist is extracted from the layout containing information about the parasitic capacitance, resistance and other parameters of the model. This netlist is used in the next step of the design flow, characterization.
+
+#### Characterization
+
+A typical standard cell characterization flow includes the following steps:
+
+1. Read in the models and tech files: The first step is to read in the SPICE technology models and other relevant technology files. These files contain information about the process technology and device models that are used in the simulation.
+2. Read extracted spice netlist: The next step is to read in the extracted SPICE netlist of the cell design. This netlist represents the circuit as a set of interconnected devices and is used as input to the simulation.
+3. Recognize behavior of the cell: The characterization software analyzes the information to recognize the cell's function. This involves identifying the inputs, outputs, and internal logic of the cell.
+4. Read the subcircuits: The software reads in any subcircuits used in the design. Subcircuits are pre-designed circuit blocks that can be reused in multiple designs.
+5. Attach power sources: Power sources are attached to the circuit to enable simulation. This involves connecting voltage sources to the appropriate nodes in the circuit.
+6. Apply stimulus to characterization setup: The software generates and applies appropriate stimulus to determine characteristics such as delay and transition time. This involves applying input signals to the circuit and simulating its response.
+7. Provide necessary output capacitance loads: Output capacitance loads are provided as necessary for simulation. These loads represent the capacitance seen by the outputs of the cell and can affect its performance.
+8. Provide necessary simulation commands: The final step is to provide any necessary simulation commands to control the simulation process. These commands can include options for controlling simulation accuracy, convergence, and other parameters.
+
+Once these steps have been completed, GUNA software generates timing, noise, and power models based on the results of the simulation. These models can then be used in chip implementation flows to ensure that the final chip meets its performance, power, and area goals.
+
+##### Timing threshold voltages
+
+The following variables are threshold voltages used in the timing characterization of a standard cell, such as a buffer containing two inverters back-to-back. They are used to define the voltage levels at which a signal is considered to have transitioned from one logic state to another. These thresholds are typically defined as a percentage of the power supply voltage.
+
+- `slew_low_rise_thr` and `slew_high_rise_thr` are used to measure the rise time (or slew rate) of a rising signal. The rise time is measured between the `slew_low_rise_thr` and `slew_high_rise_thr` voltage levels.
+- `slew_low_fall_thr` and `slew_high_fall_thr` are used to measure the fall time (or slew rate) of a falling signal. The fall time is measured between the `slew_low_fall_thr` and `slew_high_fall_thr` voltage levels.
+- `in_rise_thr` and `in_fall_thr` are used to measure the delay of a rising or falling input signal, respectively. The delay is measured from the point at which the input signal crosses the `in_rise_thr` or `in_fall_thr` voltage level.
+- `out_rise_thr` and `out_fall_thr` are used to measure the delay of a rising or falling output signal, respectively. The delay is measured from the point at which the output signal crosses the `out_rise_thr` or `out_fall_thr` voltage level.
+
+##### Propagation delay 
+
+The propagation delay is the time it takes for a signal to travel from the input of a standard cell to its output. It is characterized by measuring the delay of the rising and falling output signals with respect to the rising and falling input signals. The delay is measured from the point at which the input signal crosses the in_rise_thr or in_fall_thr voltage level to the point at which the output signal crosses the out_rise_thr or out_fall_thr voltage level.
+
+Having a negative delay is not physically possible and indicates an error in the characterization or simulation process. This could happen due to incorrect voltage thresholds being used, incorrect simulation settings, or errors in the circuit model. It is important to define the correct voltage thresholds for measuring delays and slew rates, as these values are used in static timing analysis to ensure that the circuit meets its timing requirements.
+
+##### Transition time
+
+The transition time, also known as the slew rate, is the time it takes for a signal to transition from one logic state to another. It is characterized by measuring the rise time and fall time of the signal. The rise time is measured between the slew_low_rise_thr and slew_high_rise_thr voltage levels, while the fall time is measured between the slew_low_fall_thr and slew_high_fall_thr voltage levels.
+
+The transition time is an important parameter in digital circuit design, as it affects the maximum operating frequency of the circuit. A slower transition time can result in longer propagation delays, which can limit the maximum operating frequency of the circuit. On the other hand, a faster transition time can result in increased power consumption and electromagnetic interference.
+
+
+
+
+
