@@ -330,7 +330,342 @@ Typically the output of the cell design flow consists of the following files:
 
 # Day 3 - Design of library cells using Magic Layout and ngspice characterization
 
+Note that it is possible to make changes on the OpenLANE flows and re-run the flow to see the impact of the changes. To do that, you need to change the variables in the configuration and rerun the flow. 
+
 ## Labs for CMOS inverter ngspice simulations
+
+### Spice deck
+
+First, it is needed to create a SPICE deck, also known as a SPICE input file or source file, is a text-based file that describes a circuit to be simulated using the SPICE (Simulation Program with Integrated Circuit Emphasis) software. The file consists of three main parts: data statements, control statements, and output statements.
+
+Data statements describe the components of the circuit and their interconnections. Control statements specify the type of analysis to be performed on the circuit, such as DC, AC, or transient analysis. Output statements specify what outputs are to be printed or plotted.
+
+The term “deck” comes from the early days of SPICE when input files were printed on punch cards and fed into a computer as a deck of cards.
+
+### CMOS inverter
+
+To make a CMOS inverter, it is needed to use the following components, first we define the connectivity between the components and then we define the parameters or values of each component. Following that, we name the nodes to characterize the positions of the componentes relative to each other
+
+### 16-mask CMOS process
+
+1. Substrate selection: A moderately high resistivity, (100) orientation, P-type silicon wafer is selected as the base material.
+
+2. Wafer cleaning, thermal oxidation, nitride deposition, and photoresist spinning and baking: In this step, the wafer is first cleaned to remove any contaminants that could interfere with the subsequent processing steps. Next, a layer of silicon dioxide (SiO2) is grown on the surface of the wafer through thermal oxidation. This involves heating the wafer in an oxygen-rich environment to form a thin layer of SiO2 on its surface. After the oxide layer has been grown, a layer of silicon nitride (Si3N4) is deposited on top of it using low-pressure chemical vapor deposition (LPCVD). This layer serves as a mask for the subsequent LOCOS (Local Oxidation of Silicon) process. Finally, a layer of photoresist is spun onto the wafer and baked to prepare it for the next photolithography step.
+
+
+3. Mask #1 - Active area definition: In this step, the first photolithography mask is used to define the active areas of the circuit. The mask is aligned with the wafer and exposed to ultraviolet light, which transfers the pattern from the mask onto the photoresist layer. The exposed areas of the photoresist are then developed and removed, leaving behind a patterned photoresist layer that protects the underlying nitride layer in the active areas. The nitride layer is then dry etched to remove it from the exposed areas, revealing the underlying SiO2 layer in the active areas.
+
+
+4. Field oxide growth: In this step, a thick field oxide layer is grown to electrically isolate the active areas from each other. This is done using a LOCOS (Local Oxidation of Silicon) process, which involves selectively oxidizing the exposed SiO2 in the field regions while protecting the active areas with the remaining nitride layer. The result is a thick field oxide layer that surrounds and electrically isolates each active area.
+
+5. Mask #2 - NMOS well formation: In this step, the second photolithography mask is used to form the wells for the NMOS devices. The mask is aligned with the wafer and exposed to ultraviolet light, which transfers the pattern from the mask onto the photoresist layer. The exposed areas of the photoresist are then developed and removed, leaving behind a patterned photoresist layer that protects the underlying silicon in the NMOS well regions. A boron (B+) implant is then performed to introduce boron atoms into the exposed silicon, forming P-type wells for the NMOS devices.
+
+6. Mask #3 - PMOS well formation: In this step, the third photolithography mask is used to form the wells for the PMOS devices. The process is similar to that used for the NMOS well formation, but with a different mask pattern and a phosphorus (P+) implant instead of a boron (B+) implant. The result is N-type wells for the PMOS devices.
+
+7. High-temperature drive-in: In this step, a high-temperature drive-in process is performed to produce the final well depths and repair any implant damage. This involves heating the wafer to a high temperature to drive the implanted boron and phosphorus atoms deeper into the silicon and activate them. The result is well-defined P-type and N-type wells for the NMOS and PMOS devices, respectively.
+
+8. Mask #4 - NMOS threshold voltage adjustment: In this step, the fourth photolithography mask is used to adjust the threshold voltage of the NMOS devices. The mask is aligned with the wafer and exposed to ultraviolet light, which transfers the pattern from the mask onto the photoresist layer. The exposed areas of the photoresist are then developed and removed, leaving behind a patterned photoresist layer that protects the PMOS devices. A threshold voltage adjust implant is then performed on the NMOS devices to adjust their threshold voltage to the desired value.
+
+9. Mask #5 - PMOS threshold voltage adjustment: In this step, the fifth photolithography mask is used to adjust the threshold voltage of the PMOS devices. The process is similar to that used for the NMOS threshold voltage adjustment, but with a different mask pattern and implant species. The result is PMOS devices with their threshold voltage adjusted to the desired value.
+
+10. Gate oxide growth and polysilicon deposition: In this step, the thin oxide over the active regions is stripped and a new gate oxide layer is grown. This involves heating the wafer in an oxygen-rich environment to form a thin layer of SiO2 on its surface. After the gate oxide layer has been grown, a layer of polysilicon is deposited on top of it using low-pressure chemical vapor deposition (LPCVD). This layer will be used to form the gates of the MOS transistors.
+
+11. Mask #6 - Polysilicon gate definition: In this step, the sixth photolithography mask is used to define the polysilicon gates of the MOS transistors. The mask is aligned with the wafer and exposed to ultraviolet light, which transfers the pattern from the mask onto the photoresist layer. The exposed areas of the photoresist are then developed and removed, leaving behind a patterned photoresist layer that protects the underlying polysilicon in the gate regions. The polysilicon layer is then etched to remove it from the exposed areas, leaving behind well-defined polysilicon gates for the MOS transistors.
+
+12. Lightly Doped Drain (LDD) regions formation in both the NMOS and PMOS devices. The LDD structure consists of lightly-doped source/drain regions adjacent to the gate, with heavily-doped source/drain regions laterally displaced from the gate electrode.
+
+The LDD structure is used to reduce the electric field at the drain pinchoff region, which helps to minimize two important effects: the hot electron effect and the short channel effect.
+
+The hot electron effect occurs when electrons in the channel of a MOSFET gain enough energy to overcome the potential barrier between the silicon and the gate oxide, allowing them to be injected into the gate oxide. This can result in a permanent change in the threshold voltage of the device, reducing its reliability.
+
+The short channel effect occurs when the channel length of a MOSFET is comparable to the depletion layer widths of the source and drain junctions. This can result in a number of issues, including drain-induced barrier lowering, velocity saturation, and reduced subthreshold slope.
+
+To form LDD regions, additional masking steps are used after the polysilicon gate definition step. These steps involve implanting dopants into the source and drain regions with a lower dose than that used for the heavily-doped source/drain regions. The exact details of these steps may vary depending on the specific technology and design requirements. 
+
+13. Formation of the source and drain regions of the MOSFETs. This is typically done through a process called ion implantation, where ions of a dopant material are accelerated into the silicon substrate to create regions of n+ type and p+ type material. After the implantation, a high-temperature annealing process is used to activate the dopants and repair any damage to the crystal lattice caused by the implantation. During annealing, the silicon wafer is heated to a high temperature, typically between 950°C and 1050°C, for a period of time. This allows the dopant atoms to diffuse into the silicon lattice and occupy substitutional sites, becoming electrically active. The annealing process also helps to reduce the number of defects in the crystal lattice, improving the electrical characteristics of the MOSFETs.
+
+14. Interlayer dielectric deposition and contact hole etch are the following steps. The interlayer dielectric is a layer of insulating material that separates the metal layers in an integrated circuit. The contact hole etch is the process of creating openings in the interlayer dielectric layer to allow for electrical connections between the metal layers.
+
+The interlayer dielectric deposition process typically involves depositing a layer of insulating material, such as silicon dioxide or a low-k dielectric material, onto the surface of the wafer. This can be done using techniques such as chemical vapor deposition (CVD) or atomic layer deposition (ALD).
+
+After the interlayer dielectric has been deposited, the contact hole etch process can begin. This involves using a patterned mask to selectively etch away portions of the interlayer dielectric layer, creating openings or “holes” that will allow for electrical connections between the metal layers. The etching process can be done using techniques such as reactive ion etching (RIE) or deep reactive ion etching (DRIE).
+
+15. Metal deposition and patterning is a process of creating thin metal films on a substrate using a combination of metal deposition, metal removal, and photolithography. There are two widely used methods for metal patterning: Subtractive Transfer and Additive Transfer (lift-off method).
+
+Chemical Mechanical Planarization (CMP) is a process used to planarize or smooth the surface of the wafer. CMP is used to reduce the surface topography of the wafer, which can improve the performance of the devices being fabricated on the wafer.
+
+After CMP, a barrier layer such as Titanium Nitride (TiN) is deposited. TiN serves as an adhesion layer for tungsten deposition on dielectric materials. Tungsten is then deposited using techniques such as Chemical Vapor Deposition (CVD).
+
+A top Silicon Nitride (SiN) layer can be used as a capping layer after silicide formation to prevent oxidation during subsequent processing steps4. This helps to protect the chip and improve its reliability.
+
+### Layout in Magic
+
+We shall integrate a custom CMOS inverter layout in the picorv32a chip. The layout is cloned from the following github:
+
+```git clone https://github.com/nickson-jose/vsdstdcelldesign```
+
+In the vsdstdcelldesign folder we use the following command to open the layout in Magic:
+
+```magic -T sky130A.tech sky130_inv.mag```
+
+Note: the sky130A.tech file was extracted from the pdks folder.
+
+The layout is shown below:
+
+![CMOSInverterMagic](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/CMOSInverterMagic.png)
+
+We can also verifiy the interconnects in the layout by selecting the components with "s" three times, so, selecting the connection between the drains:
+
+![CMOSInverterInterconnect.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/CMOSInverterInterconnect.png)
+
+Also, note about the LEF or library exchange format: A format that tells us about cell boundaries, VDD and GND lines. It contains no info about the logic of circuit and is also used to protect the IP
+
+
+### SPICE Extraction
+
+Now, to extract the SPICE from .mag to .spice we use the following commands:
+
+```
+extract all
+ext2spice cthresh 0 rethresh 0
+ext2spice
+
+```
+
+![InverterSPICEExtractionTkz.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/InverterSPICEExtractionTkz.png)
+
+Then, we modify the .spice file to make a transient analysis of the cell. The .spice file is shown below:
+
+![SPICENetlist.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/SPICENetlist.png)
+
+Runnning the simulation with the command:
+
+```ngspice sky130_inv.spice```
+
+Then, the output "y" is to be plotted with "time" and swept over the input "a":
+
+```plot y vs time a```
+
+We get the following plot:
+
+![YvsTPlot.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/YvsTPlot.png)
+
+Then, using the plot we can calculate the rise time, fall time and propagation delay as explained in previous sections:
+
+Rise Time: The time taken for the output signal to go from 20% of its max value to 80% of its max value.
+Fall Time: The time taken for the output signal to go from 80% of its max value to 20% of its max value.
+Propagation Delay(Rising): The time difference between the points where the input and output are at 50% of their magnitude when the signal rises from 0V to max value (50% output rise - 50% input fall).
+Propagation Delay(Falling): The time difference between the points where the input and output are at 50% of their magnitude when the signal falls from max value to 0V (50% output fall - 50% input rise).
+
+### Characterization of the inverter
+
+The values extracted from the ngspice graphs are:
+
+1. Rise Time:
+
+![RiseTime.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/RiseTime.png)
+
+Tr = 2.26331ns - 2.18416ns = 0.07915ns
+
+2. Fall Time:
+
+![FallTime.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/FallTime.png)
+
+Tf = 4.08308ns - 4.03873ns = 0.04435ns
+
+3. Propagation Delay(Rising):
+
+![CellRiseDelay.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/CellRiseDelay.png)
+
+Trd = 2.21922ns - 2.2ns = 0.01922ns
+
+4. Propagation Delay(Falling):
+
+![CellFallDelay.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day3/Images/CellFallDelay.png)
+
+Tfd = 4.05819ns - 4.05ns = 0.00819ns
+
+
+# Day 4 - Pre-layout timing analysis and importance of good clock tree
+
+## Inserting custom cell design in OpenLANE
+
+### Developing LEF file 
+
+First, we need to guarantee that the layout of the cell in magic is correct conforming to the PnR tool, for that:
+
+* The ports (Y and A in this case) must be on the interconnects of the grids;
+* The width and height of the cell must be an odd multiple of the track pitch;
+
+For that, it is needed to convert the grid size to the track pitch. The tracks info file contains the pitch and offset of the tracks. The pitch is the distance between the center of two adjacent tracks. The offset is the distance from the origin to the center of the first track. The tracks info file is shown below:
+
+Now, to configure the grid in magic we use the following command:
+
+```grid 0.46um 0.34um 0.23um 0.17um```
+
+The grid is shown below:
+
+![MagicGRID.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/MagicGRID.png)
+
+
+Now, it is necessary to define the name of the pins (or ports) and their attributes and uses fot the PnR tool to make right connections. For that, we select the ports in magic and use the Edit > Text option.
+
+For port A:
+
+![APort.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/APort.png)
+
+For port Y:
+
+![YPort.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/YPort.png)
+
+
+For port VPWR:
+
+![VPWRPort.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/VPWRPort.png)
+
+For port VGND:
+
+![VGNDPort.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/VGNDPort.png)
+
+Now, selecting the ports areas again, we must set their purposes:
+
+For port A:
+
+```
+port class input
+port use signal
+```
+
+For port Y:
+
+```
+port class output
+port class signal
+```
+
+For port VPWR:
+
+```
+port class inout
+port use power
+```
+
+For port VGND:
+
+```
+port class inout
+port use ground
+```
+
+Now, we generate a lef file using:
+
+```lef write```
+
+And the purpose of these steps is to insert a custom cell in the OpenLANE flow.
+
+### Integrating custom cell in OpenLANE
+
+First, we copy the generated lef file to the designs/picorv32a/src directory. Then, we copy the the libraries from te vsdstdcelldesign/libs folder to the designs/picorv32a/src folder.
+
+Note that there are 3 types of libs, slow, typical, and fast. The typical library models the behavior of the circuit under nominal voltage, and temperature (PVT)conditions. The typical library models the behavior of the circuit under nominal PVT conditions, while the slow and fast libraries model the behavior of the circuit under worst-case PVT conditions. For example, the slow library models the behavior of the circuit when the process is slow (i.e., when the transistors are slower than expected), while the fast library models the behavior of the circuit when the process is fast (i.e., when the transistors are faster than expected).
+
+Then, we modify config.tcl to include the new cell in the synthesis with the following enviroment variables:
+
+```
+set ::env(LIB_SYNTH) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130/sky130_fd_sc_hd__typical.lib"
+set ::env(LIB_SLOWEST) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130/sky130_fd_sc_hd__slow.lib"
+set ::env(LIB_FASTEST) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130/sky130_fd_sc_hd__fast.lib"
+set ::env(LIB_TYPICAL) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130/sky130_fd_sc_hd__typical.lib"
+
+set ::env(EXTRA_LEFS) [glob $::env(OPENLANE_ROOT)/designs/$::env(DESIGN_NAME)/src/*.lef]
+```
+
+The config.tcl is as follows:
+
+![ModifiedConfigTcl.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/ModifiedConfigTcl.png)
+
+
+Then, we execute the synthesis, floorplan and placement steps again, while overwriting the previous results with the new cell by using the following commands:
+
+```
+prep -design picorv32a -tag RUN_2023.08.10_04.10.39 -overwrite
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+add_lefs -src $lefs
+run_synthesis
+run_floorplan
+run_placement
+```
+
+![FlowReRun.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/FlowReRun.png)
+
+Now, to view the results in magic, from the folder /results/placement,
+
+```
+magic -T /home/rafael_linux/OpenLane/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.max.lef def read picorv32a.def &
+```
+![MagicAfterPlacement.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/MagicAfterPlacement.png)
+
+Using the cell manager tool, we can see the new custom cell after placement:
+
+![MagicCustomCell.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/MagicCustomCell.png)
+
+
+## Timing modelling using delay tables
+
+Delay tables are used in Static Timing Analysis (STA) to calculate the delay of a cell in a timing path. Typically, a delay table lists the amount of delay as a function of one or more variables, such as input transition time and output load capacitance. From these table entries, the STA tool calculates each cell delay. Cell delay is the time it takes for a signal to propagate through a cell. The delay tables are contained in the library of the cell. Also, an important aspecto to take note in the delay of a cell in a trace is that of output load capacitance.
+
+Output load capacitance refers to the total capacitive load on a trace, which is defined as the sum of the input capacitance of all the other devices sharing the trace. The capacitance of the device driving the trace is not included in this calculation. So, for examploe, output load capacitance can affect the performance of a circuit in several ways. For instance, in digital circuits, the load capacitance can impact the propagation delay of the signal, which is the amount of time it takes for the signal to go from the output of one gate to the input of another. The speed of signal transmission decreases with increasing load capacitance. Or, in analogue circuits, this capacitance impacts the frequency response and bandwidth. So, as the propagataion delay increases when the output signal of a gate takes longer to rise or fall when the load capacitance is large, a slower circuit speed, a lower working frequency, and more power consumption may be the effects of this delay.
+
+
+## Timing analysis and clock signal
+
+Another important aspecto to take into account when doing timing analysis is that of clocks. In an ideal situation, the clock signal would be a perfect square wave, with a 50% duty cycle. However, in reality, the clock signal is not perfect, and it has a finite rise and fall time. This means that the clock signal does not change instantaneously, and it takes some time to change from one state to another.
+
+Because of that, a phenomenon called clock skew happens in synchronous digital circuit systems, where the same sourced clock signal arrives at different components at different times due to gate or wire signal propagation delay. Clock skew can be positive or negative, positive skew means that the clock signal arrives later at a cell than at the clock source and, likewise, negative skew means that the clock signal arrives earlier at a device than at the clock source. Knowing that, Clock skew can be calculated by subtracting the arrival time of the clock signal at a cell from the arrival time of the clock signal at the clock source. Clock skew can be compensated for by adding delay to the clock signal at the clock source. Other factors can also influence, such as wire-interconnect length, temperature variations, variation in intermediate devices, capacitive coupling, material imperfections, and differences in input capacitance on the clock inputs of devices using the signal.
+
+Knowing that, in real clock design, some factors can interfere with the integrity and synchronization of the signal, such as:
+
+- Clock jitter: deviation from true periodicity of a presumably periodic signal, often in relation to a reference clock signal;
+
+- Clock crosstalk: a phenomenon that occurs when a signal transmitted on one circuit or channel creates an undesired effect on another circuit or channel. For that, Clock net shielding is a technique used to reduce inductive ringing and improve performance in clock distribution networks. It involves the use of shield wires, which are additional ground or power wires that are inserted between the clock signal wire and other wires to reduce loop inductance and the associated inductive effects;
+
+So, in a variable called clock uncertainty we model these factors like jitter, crosstalk, skew, and others. Being it essentialy the maximum value a clock signal can vary from its ideal value.
+
+An algorithm used to design clock circuits to achieve zero skew, is called H-tree. It is a clock distribution topology used to achieve minimum clock skew and good robustness against variations. It is structurally symmetric and balanced, which ensures low skew across the corners of related sequential elements. The symmetrical construction of the H-tree allows for equal wire lengths, which helps to achieve perfect synchronization between clock signals before their arrival at sub-blocks or synchronous elements. However, the H-tree topology comes at the cost of large wirelength and clock power.
+
+Also, clock buffers are added to simplify the clock tree design. They are used to generate multiple copies of a clock signal, which can then be distributed to different parts of the circuit and also can help to reduce clock skew and improve the performance of the circuit by ensuring that the clock signals arrive at their destinations at the same time.
+
+## Timing analysis using OpenSTA
+
+In static timing analysis, some factors of importance are:
+
+- Setup time: It is the minimum amount of time the data signal should be held steady before the clock event so that the data are reliably sampled by the clock. A setup constraint specifies how much time is necessary for data to be available at the input of a sequential device before the clock edge that captures the data in the device.
+
+- Hold time: It is the minimum amount of time the data signal should be held steady in a cell after the clock event so that the data are reliably sampled by the clock. A hold constraint specifies how long the data must be held at the input of a sequential device after the clock edge that captures the data in the device.
+
+- Slack: It is used to indicate whether timing is met along a timing path, being the difference between the desired arrival time and the actual arrival time for a signal. It determines if the design is working at the desired frequency, with a positive slack meaning that the signal can get from the startpoint to the endpoint of the timing path fast enough for the circuit to operate correctly. Positive slack indicates that the design is meeting the timing and still it can be improved, while zero slack means that the design is critically working at the desired frequency. Negative slack means that the design is not meeting the timing and it needs to be improved.
+
+
+### Post-synthesis timing analysis
+
+To run the post-synthesis timing analysis, we need to run the following commands:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
