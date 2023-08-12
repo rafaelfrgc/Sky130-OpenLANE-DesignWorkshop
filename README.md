@@ -3,7 +3,7 @@ This is a documentation of the core concepts of what was presented in the 5-day 
 
 
 ## Table of Contents
-1. [Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK](#Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK)
+1. [Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK](#day-1---inception-of-open-source-eda-openlane-and-sky130-pdk)
   - [How to Talk to computers?](#how-to-talk-to-computers?)
   - [SoC design and OpenLANE](#soc-design-and-openlane)
     - [History and components of ASIC design](#history-and-components-of-asic-design)
