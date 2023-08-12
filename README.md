@@ -1,17 +1,75 @@
 # Sky130-OpenLANE-DesignWorkshop
 This is a documentation of the core concepts of what was presented in the 5-day workshop  "Advanced Physical Design using OpenLANE/Sky130" by VLSI System Design (VSD), where a project with complete RTL to GDSII flow for PicoRV32a SoC is executed with Openlane using Skywater130nm PDK. Custom designed standard cells with Sky130 PDK are also used in the flow. Timing Optimisations are carried out. Slack violations are removed. DRC is verified.
 
+
+## Table of Contents
+1. [Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK](#Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK)
+  - [How to Talk to computers?](#how-to-talk-to-computers?)
+  - [SoC design and OpenLANE](#soc-design-and-openlane)
+    - [History and components of ASIC design](#history-and-components-of-asic-design)
+    - [Simplified RTL2GDS Flow](#simplified-rtl2gds-flow)
+    - [OpenLANE](#openlane)
+    - [OpenLANE ASIC Design Flow](#openlane-asic-design-flow)
+  - [Open Source EDA Tools](#open-source-eda-tools)
+    - [OpenLANE directory structure](#openlane-directory-structure)
+    - [Synthesis](#synthesis)
+2. [Day 2 - Good floorplan vs bad floorplan and introduction to library cells](#day-2---good-floorplan-vs-bad-floorplan-and-introduction-to-library-cells)
+  - [Chip Floor planning considerations](#chip-floor-planning-considerations)
+    - [Utilization Factor and Aspect Ratio](#utilization-factor-and-aspect-ratio)
+    - [Pre-placed cells](#pre-placed-cells)
+    - [Decoupling capacitors](#decoupling-capacitors)
+    - [Power Planning](#power-planning)
+    - [Pin Placement](#pin-placement)
+    - [Floorplan in OpenLANE and view in Magic](#floorplan-in-openlane-and-view-in-magic)
+  - [Placement in OpenLANE and view in Magic](#placement-in-openlane-and-view-in-magic)
+    - [Library binding and placement](#library-binding-and-placement)
+      - [Placement in OpenLANE using RePlace](#placemente-in-openlane-using-replace)
+  - [Cell design and characterization flows](#cell-design-and-characterization-flows)
+    - [Inputs](#inputs)
+    - [Design steps](#design-steps)
+      - [Circuit design](#circuit-design)
+      - [Layout design](#layout-design)
+      - [Characterization](#characterization)
+      - [Timing threshold voltages](#timing-threshold-voltages)
+      - [Propagation delay](#propagation-delay)
+      - [Transition time](#transition-time)
+      - [Output](#output)
+3. [Day 3 - Design library cell using Magic Layout and ngspice characterization](#day-3---design-library-cell-using-magic-layout-and-ngspice-characterization)
+  - [Labs for CMOS inverter ngspice simulations](#labs-for-cmos-inverter-ngspice-simulations)
+    - [Spice deck](#spice-deck)
+    - [CMOS inverter](#cmos-inverter)
+    - [16-mask CMOS process](#16-mask-cmos-process)
+    - [Layout in Magic](#layout-in-magic)
+    - [SPICE Extraction](#spice-extraction)
+    - [Characterization of the inverter](#characterization-of-the-inverter)
+4. [Day 4 - Pre-layout timing analysis and importance of good clock tree](#day-4---pre-layout-timing-analysis-and-importance-of-good-clock-tree)
+  - [Inserting custom cell design in OpenLANE](#inserting-custom-cell-design-in-openlane)
+    - [Developing LEF file](#developing-lef-file)
+    - [Integrating custom cell in OpenLANE](#integrating-custom-cell-in-openlane)
+  - [Timing modelling using delay tables](#timing-modelling-using-delay-tables)
+    - [Timing analysis and clock signal](#timing-analysis-and-clock-signal)
+    - [Timing analysis using OpenSTA](#timing-analysis-using-opensta)
+      - [Post-synthesis timing analysis](#post-synthesis-timing-analysis)
+5. [Final steps for RTL2GDS](#final-steps-for-rtl2gds)
+  - [Routing and DRC](#routing-and-drc)
+  - [Power distribution network (PDN) and routing](#power-distribution-network-pdn-and-routing)
+  - [SPEF Extraction and GDSII Generation](#spef-extraction-and-gdsii-generation)
+6. [Acknowledgements](#acknowledgements)
+
+
+
 # Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK
-## How to talk to computers 
+## How to talk to computers?
 
 This section is an introduction to computers and chips with related terms and concepts. It covers:
- 1. Introduction to what is meant by a "chip", covering what are packages, like the QFN-48 Package, and the parts of a package like pads, core, die, IPs and foundries.  
- 2. Introduction to RISC-V:  
- This is an brief introduction to the contents of the course, talking about how a programming language is translated to hardware operations through compilation, HDLs, and layout of the chip, especiffically using the RISC-V ISA.
- 3. From Software Applications to Hardware
- This topic talks about the process to execute a software application in a hardware chip, and the steps involved in the process, like the compiler, assembler and the OS. It also describes what is an ISA, the RTL description of the chip using a HDL, the netlist synthesis and the physical design of the netlist.
 
- ## SoC design and OpenLANE
+1. Introduction to what is meant by a "chip", covering what are packages, like the QFN-48 Package, and the parts of a package like pads, core, die, IPs and foundries.  
+2. Introduction to RISC-V:  
+This is an brief introduction to the contents of the course, talking about how a programming language is translated to hardware operations through compilation, HDLs, and layout of the chip, especiffically using the RISC-V ISA.
+3. From Software Applications to Hardware
+This topic talks about the process to execute a software application in a hardware chip, and the steps involved in the process, like the compiler, assembler and the OS. It also describes what is an ISA, the RTL description of the chip using a HDL, the netlist synthesis and the physical design of the netlist.
+
+## SoC design and OpenLANE
 
 This section talks about the Open Source ASIC Flow in general.
 
@@ -227,7 +285,7 @@ A library contains informations about the physical cells available for use in th
 
 The process of binding a netlist with physical cells involves taking the logical representation of the design, as described in the netlist, and mapping it to the physical cells available in the library. This is typically done during the placement stage of the physical design flow. During this stage, the placement tool takes the netlist as input and uses the information contained in the library to select the appropriate physical cells for each logic gate or other component in the design. The tool then places these physical cells on the chip, optimizing their placement based on estimated wire length, signal integrity, and other factors. In the case that the distances between the cells are too large, the tool may also insert buffer cells to reduce the wire length, this is done to reduce the delay and preserve signal integrity.
 
-#### Placement in OpenLANE using RePLace
+#### Placement in OpenLANE using RePlace
 
 In OpenLANE, the placement tool used is RePLace. To run placement in OpenLANE, the following command is used:
 
@@ -648,7 +706,127 @@ In static timing analysis, some factors of importance are:
 
 ### Post-synthesis timing analysis
 
-To run the post-synthesis timing analysis, we need to run the following commands:
+To run the post-synthesis timing analysis, we first create a pre_sta.conf file to use the OpenSTA tool to check the slack time:
+
+![pre_confStaFile.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/pre_confStaFile.png)
+
+Then, we run the OpenSTA tool outside the OpenLANE environment, using the command:
+
+```
+sta pre_sta.conf
+```
+
+The output of the command is:
+
+![OpenSTAOutput.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/OpenSTAOutput.png)
+
+As we can see, the slack time is negative, which means that the design is not meeting the timing and it needs to be improved. For that, we can change the fanout variable using:
+
+```
+set ::env(SYNTHESIS_FANOUT) 4
+```
+And also change cells with high fanout.
+
+Also, by changing the SYNTH_SIZING, SYNTH_STRATEGY, cells with high fanout and synthesis buffer variables and running synthesis again, and fine-tuning these variables, the slack time can be reduced. For example,
+
+![SlackOptimized.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/SlackOptimized.png)
+
+Next, we run clock tree synthesis using the command:
+
+```
+run_cts
+```
+With the output:
+
+![CTS.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/CTS.png)
+
+
+Then, we check for the slack again running Post-CTS STA in OpenROAD using the commands:
+
+```
+openroad
+write_db pico_cts.db
+read_db pico_cts.db
+read_verilog /openlane/designs/picorv32a/runs/12-08_14-08/results/synthesis/picorv32a.synthesis_cts.v
+read_liberty $::env(LIB_SYNTH_COMPLETE)
+link_design picorv32a
+read_sdc /openLANE_flow/designs/picorv32a/src/my_base.sdc
+set_propagated_clock (all_clocks)
+report_checks -path_delay min_max -format full_clock_expanded -digits 4
+```	
+
+# Day 5 - Final steps for RTL2GDS
+
+## Routing and DRC
+
+One of the algorithms used for routing is know as Lee's algorithm or the maze algorithm. It is a widely used algorithm to find the shortest path between two points in a maze. It is based on breadth-first search and always gives an optimal solution if one exists.
+
+The main steps of the algorithm are as follows:
+1. **Initialization**: Select the start point and mark it with 0.
+2. **Wave expansion**: Mark all unlabeled neighbors of points marked with i with i+1, where i starts from 0 and increases by 1 until the target is reached or no more points can be marked.
+3. **Backtrace**: Starting from the target point, go to the next node that has a lower mark than the current node and add this node to the path until the start point is reached.
+4. **Clearance**: Block the path for future wirings and delete all marks.
+
+While Lee's algorithm guarantees an optimal solution, it can be slow and requires considerable memory. To overcome these shortcomings, more advanced algorithms such as Line search Algorithm and Steiner Algorithms have been developed.
+
+## Power distribution network (PDN) and routing
+
+Now, having ran the routing, we can use the following commando to run power distribution network (PDN):
+
+```
+gen_pdn
+```
+
+This phase takes the design_cts.def file as input and generates the grid and straps for the Vdd and ground signals. These are placed around the standard cells, which are designed such that their height is a multiple of the space between the Vdd and ground rails. In this design, the pitch is 2.72.
+
+Power enters the chip through power pads, one for Vdd and one for Gnd. From these pads, power enters rings through vias. The straps are connected to these rings, with Vdd straps connected to the Vdd ring and Gnd straps connected to the Gnd ring. There are both horizontal and vertical straps.
+
+The power is then supplied from the straps to the standard cells by connecting the straps to the rails of the standard cells. If macros are present, then the straps attach to the rings of the macros via macro pads, and the PDN for the macro is pre-done.
+
+In this design, straps are at metal layers 4 and 5, while standard cell rails are at metal layer 1. Vias connect across layers as required.
+
+Then, routing is the next step, as explained in the beginning sections, the TritonRoute tool is used for routing. Some of its features are:
+
+- MILP: stands for Mixed Integer Linear Programming, which is a mathematical optimization method that can be used to solve problems with both integer and continuous variables1. TritonRoute, an initial detailed router for advanced VLSI technologies, uses a parallel MILP-based panel routing scheme for each layer, called intra-layer parallel routing;
+
+- Honours pre-processed route guides: A detailed router needs to honor route guides, i.e., to route within route guides as much as possible;
+
+- Assumes that each net satisfies inter guide connectivity: This means that all unconnected terminals of a net can be traced through connected route guides.
+
+To run routing, we use the command:
+
+```
+run_routing
+```
+The options for routing can be set in the config.tcl file. Also, optimisations in routing can be done by specifying the routing strategy. There are 5: 0, 1, 2, 3, 4 and 14. There is a trade-off between the optimised route and the runtime for routing. For the default setting picorv32a takes approximately 30 minutes according to the current version of TritonRoute.
+
+## SPEF Extraction and GDSII Generation
+
+Now, it is important to do post-routing STA analysis. For that, the first goal is to extract (SPEF), which stands for Standard Parasitic Exchange Format, which is an IEEE standard for representing the parasitic data of wires in a chip in ASCII format. SPEF extraction is done outside the OpenLANE as it has no native extraction tool.
+
+The extractefd .spef file from the lef files can be found in the routing folder, under results. Finally, by running the command:
+
+```
+run_magic
+```
+The final GDSII file is generated in the magic folder under results:
+
+![picorv32a.gds.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day5/Images/picorv32a.gds.png).
+
+# Acknowledgements
+
+- Kunal Ghosh, Co-founder (VSD Corp. Pvt. Ltd)
+- Nickson Jose, Teaching Assistant (VSD Corp. Pvt. Ltd)
+- The VSD-IAT Team
+- The OpenROAD project
+
+
+
+
+
+
+
+
 
 
 
