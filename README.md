@@ -270,7 +270,7 @@ Magic basic controls are as follows:
 
 ![MagicFloorplanTopView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day2/Images/MagicFloorplanTopView.png)
 
-The standard cells are not placement during this stage, but they can be seen in the black boxes in the bottom left corner. It is also possible to see the decoupling capacitors:
+The standard cells are not placed during this stage, but they can be seen in the black boxes in the bottom left corner. It is also possible to see the decoupling capacitors:
 
 ![MagicFloorplanDecapView](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day2/Images/MagicFloorplanDecapView.png)
 
@@ -652,6 +652,13 @@ run_floorplan
 run_placement
 ```
 
+We can see the design after the re-run floorplan:
+
+![picorv32aFloorplan.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/picorv32aFloorplan.png)
+
+
+And the results of the re-run:
+
 ![FlowReRun.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/FlowReRun.png)
 
 Now, to view the results in magic, from the folder /results/placement,
@@ -659,6 +666,7 @@ Now, to view the results in magic, from the folder /results/placement,
 ```
 magic -T /home/rafael_linux/OpenLane/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.max.lef def read picorv32a.def &
 ```
+
 ![MagicAfterPlacement.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/MagicAfterPlacement.png)
 
 Using the cell manager tool, we can see the new custom cell after placement:
@@ -729,7 +737,7 @@ Also, by changing the SYNTH_SIZING, SYNTH_STRATEGY, cells with high fanout and s
 
 ![SlackOptimized.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/SlackOptimized.png)
 
-Next, we run clock tree synthesis using the command:
+Next, we run clock tree synthesis using the commands:
 
 ```
 run_cts
@@ -738,6 +746,9 @@ With the output:
 
 ![CTS.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/CTS.png)
 
+A screenshot of the design after CTS is:
+
+![picorv32aCTS.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/picorv32aCTS.png)
 
 Then, we check for the slack again running Post-CTS STA in OpenROAD using the commands:
 
@@ -772,8 +783,27 @@ While Lee's algorithm guarantees an optimal solution, it can be slow and require
 Now, having ran the routing, we can use the following commando to run power distribution network (PDN):
 
 ```
+init_floorplan
+place_io
+global_placement_or
+tap_decap_or
+run_placement
+run_cts
+echo $::env(CURRENT_DEF)
+---
 gen_pdn
 ```
+
+With 
+
+```
+echo $::env(CURRENT_DEF)
+```
+
+Being used to check the current stage of flow. We must be in the CTS stage to run PDN.
+
+![SeeWhereWeAreForPDN.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/SeeWhereWeAreForPDN.png)
+
 
 This phase takes the design_cts.def file as input and generates the grid and straps for the Vdd and ground signals. These are placed around the standard cells, which are designed such that their height is a multiple of the space between the Vdd and ground rails. In this design, the pitch is 2.72.
 
@@ -782,6 +812,10 @@ Power enters the chip through power pads, one for Vdd and one for Gnd. From thes
 The power is then supplied from the straps to the standard cells by connecting the straps to the rails of the standard cells. If macros are present, then the straps attach to the rings of the macros via macro pads, and the PDN for the macro is pre-done.
 
 In this design, straps are at metal layers 4 and 5, while standard cell rails are at metal layer 1. Vias connect across layers as required.
+
+As we can see, PDN was successfull:
+
+![PDNSuccess.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/PDNSuccess.png)
 
 Then, routing is the next step, as explained in the beginning sections, the TritonRoute tool is used for routing. Some of its features are:
 
@@ -797,6 +831,18 @@ To run routing, we use the command:
 run_routing
 ```
 The options for routing can be set in the config.tcl file. Also, optimisations in routing can be done by specifying the routing strategy. There are 5: 0, 1, 2, 3, 4 and 14. There is a trade-off between the optimised route and the runtime for routing. For the default setting picorv32a takes approximately 30 minutes according to the current version of TritonRoute.
+
+As we can see, routing was successfull with no DRC violations:
+
+![DetailedRoutingNoDRCViolations.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/DetailedRoutingNoDRCViolations.png)
+
+
+![RoutingSuccess.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/RoutingSuccess.png)
+
+And the final result:
+
+![picorv32aRouting.png](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day4/Images/picorv32aRouting.png)
+
 
 ## SPEF Extraction and GDSII Generation
 
