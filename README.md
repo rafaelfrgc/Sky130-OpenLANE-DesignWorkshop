@@ -50,7 +50,7 @@ This is a documentation of the core concepts of what was presented in the 5-day 
       - [Timing analysis and clock signal](#timing-analysis-and-clock-signal)
       - [Timing analysis using OpenSTA](#timing-analysis-using-opensta)
         - [Post-synthesis timing analysis](#post-synthesis-timing-analysis)
-5. [Final steps for RTL2GDS](#final-steps-for-rtl2gds)
+5. [Final steps for RTL2GDSII](#final-steps-for-rtl2gdsii)
     - [Routing and DRC](#routing-and-drc)
     - [Power distribution network (PDN) and routing](#power-distribution-network-pdn-and-routing)
     - [SPEF Extraction and GDSII Generation](#spef-extraction-and-gdsii-generation)
@@ -753,7 +753,7 @@ set_propagated_clock (all_clocks)
 report_checks -path_delay min_max -format full_clock_expanded -digits 4
 ```	
 
-# Day 5 - Final steps for RTL2GDS
+# Day 5 - Final steps for RTL2GDSII
 
 ## Routing and DRC
 
