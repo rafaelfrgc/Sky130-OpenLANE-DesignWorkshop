@@ -1,6 +1,6 @@
 # Sky130-OpenLANE-DesignWorkshop
-This is a documentation of the core concepts of what was presented in the 5-day workshop  "Advanced Physical Design using OpenLANE/Sky130" by VLSI System Design (VSD), where a project with complete RTL to GDSII flow for PicoRV32a SoC is executed with Openlane using Skywater130nm PDK. Custom designed standard cells with Sky130 PDK are also used in the flow. Timing Optimisations are carried out. Slack violations are removed. DRC is verified.
 
+This is a documentation of the core concepts of what was presented in the 5-day workshop  "Advanced Physical Design using OpenLANE/Sky130" by VLSI System Design (VSD), where a project with complete RTL to GDSII flow for PicoRV32a SoC is executed with Openlane using Skywater130nm PDK. In this project, custom cells are inserted in the flow, timing analysis is performed, DRC rules are checked, and many more concepts covering the sofwares and theory behind the main steps of the flow of an IC design are presented.
 
 ## Table of Contents
 1. [Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK](#day-1---inception-of-open-source-eda-openlane-and-sky130-pdk)
