@@ -13,6 +13,7 @@ This is a documentation of the core concepts of what was presented in the 5-day 
   - [Open Source EDA Tools](#open-source-eda-tools)
     - [OpenLANE directory structure](#openlane-directory-structure)
     - [Synthesis](#synthesis)
+
 2. [Day 2 - Good floorplan vs bad floorplan and introduction to library cells](#day-2---good-floorplan-vs-bad-floorplan-and-introduction-to-library-cells)
   - [Chip Floor planning considerations](#chip-floor-planning-considerations)
     - [Utilization Factor and Aspect Ratio](#utilization-factor-and-aspect-ratio)
@@ -34,6 +35,7 @@ This is a documentation of the core concepts of what was presented in the 5-day 
       - [Propagation delay](#propagation-delay)
       - [Transition time](#transition-time)
       - [Output](#output)
+
 3. [Day 3 - Design library cell using Magic Layout and ngspice characterization](#day-3---design-library-cell-using-magic-layout-and-ngspice-characterization)
   - [Labs for CMOS inverter ngspice simulations](#labs-for-cmos-inverter-ngspice-simulations)
     - [Spice deck](#spice-deck)
@@ -42,6 +44,7 @@ This is a documentation of the core concepts of what was presented in the 5-day 
     - [Layout in Magic](#layout-in-magic)
     - [SPICE Extraction](#spice-extraction)
     - [Characterization of the inverter](#characterization-of-the-inverter)
+
 4. [Day 4 - Pre-layout timing analysis and importance of good clock tree](#day-4---pre-layout-timing-analysis-and-importance-of-good-clock-tree)
   - [Inserting custom cell design in OpenLANE](#inserting-custom-cell-design-in-openlane)
     - [Developing LEF file](#developing-lef-file)
@@ -50,10 +53,12 @@ This is a documentation of the core concepts of what was presented in the 5-day 
     - [Timing analysis and clock signal](#timing-analysis-and-clock-signal)
     - [Timing analysis using OpenSTA](#timing-analysis-using-opensta)
       - [Post-synthesis timing analysis](#post-synthesis-timing-analysis)
+
 5. [Final steps for RTL2GDS](#final-steps-for-rtl2gds)
   - [Routing and DRC](#routing-and-drc)
   - [Power distribution network (PDN) and routing](#power-distribution-network-pdn-and-routing)
   - [SPEF Extraction and GDSII Generation](#spef-extraction-and-gdsii-generation)
+  
 6. [Acknowledgements](#acknowledgements)
 
 
