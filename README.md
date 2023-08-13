@@ -4,61 +4,56 @@ This is a documentation of the core concepts of what was presented in the 5-day 
 
 ## Table of Contents
 1. [Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK](#day-1---inception-of-open-source-eda-openlane-and-sky130-pdk)
-  - [How to Talk to computers?](#how-to-talk-to-computers?)
-  - [SoC design and OpenLANE](#soc-design-and-openlane)
-    - [History and components of ASIC design](#history-and-components-of-asic-design)
-    - [Simplified RTL2GDS Flow](#simplified-rtl2gds-flow)
-    - [OpenLANE](#openlane)
-    - [OpenLANE ASIC Design Flow](#openlane-asic-design-flow)
-  - [Open Source EDA Tools](#open-source-eda-tools)
-    - [OpenLANE directory structure](#openlane-directory-structure)
-    - [Synthesis](#synthesis)
-
+    - [How to Talk to computers?](#how-to-talk-to-computers?)
+    - [SoC design and OpenLANE](#soc-design-and-openlane)
+      - [History and components of ASIC design](#history-and-components-of-asic-design)
+      - [Simplified RTL2GDS Flow](#simplified-rtl2gds-flow)
+      - [OpenLANE](#openlane)
+      - [OpenLANE ASIC Design Flow](#openlane-asic-design-flow)
+    - [Open Source EDA Tools](#open-source-eda-tools)
+      - [OpenLANE directory structure](#openlane-directory-structure)
+      - [Synthesis](#synthesis)
 2. [Day 2 - Good floorplan vs bad floorplan and introduction to library cells](#day-2---good-floorplan-vs-bad-floorplan-and-introduction-to-library-cells)
-  - [Chip Floor planning considerations](#chip-floor-planning-considerations)
-    - [Utilization Factor and Aspect Ratio](#utilization-factor-and-aspect-ratio)
-    - [Pre-placed cells](#pre-placed-cells)
-    - [Decoupling capacitors](#decoupling-capacitors)
-    - [Power Planning](#power-planning)
-    - [Pin Placement](#pin-placement)
-    - [Floorplan in OpenLANE and view in Magic](#floorplan-in-openlane-and-view-in-magic)
-  - [Placement in OpenLANE and view in Magic](#placement-in-openlane-and-view-in-magic)
-    - [Library binding and placement](#library-binding-and-placement)
-      - [Placement in OpenLANE using RePlace](#placemente-in-openlane-using-replace)
-  - [Cell design and characterization flows](#cell-design-and-characterization-flows)
-    - [Inputs](#inputs)
-    - [Design steps](#design-steps)
-      - [Circuit design](#circuit-design)
-      - [Layout design](#layout-design)
-      - [Characterization](#characterization)
-      - [Timing threshold voltages](#timing-threshold-voltages)
-      - [Propagation delay](#propagation-delay)
-      - [Transition time](#transition-time)
-      - [Output](#output)
-
+    - [Chip Floor planning considerations](#chip-floor-planning-considerations)
+      - [Utilization Factor and Aspect Ratio](#utilization-factor-and-aspect-ratio)
+      - [Pre-placed cells](#pre-placed-cells)
+      - [Decoupling capacitors](#decoupling-capacitors)
+      - [Power Planning](#power-planning)
+      - [Pin Placement](#pin-placement)
+      - [Floorplan in OpenLANE and view in Magic](#floorplan-in-openlane-and-view-in-magic)
+    - [Placement in OpenLANE and view in Magic](#placement-in-openlane-and-view-in-magic)
+      - [Library binding and placement](#library-binding-and-placement)
+        - [Placement in OpenLANE using RePlace](#placemente-in-openlane-using-replace)
+    - [Cell design and characterization flows](#cell-design-and-characterization-flows)
+      - [Inputs](#inputs)
+      - [Design steps](#design-steps)
+        - [Circuit design](#circuit-design)
+        - [Layout design](#layout-design)
+        - [Characterization](#characterization)
+        - [Timing threshold voltages](#timing-threshold-voltages)
+        - [Propagation delay](#propagation-delay)
+        - [Transition time](#transition-time)
+        - [Output](#output)
 3. [Day 3 - Design library cell using Magic Layout and ngspice characterization](#day-3---design-library-cell-using-magic-layout-and-ngspice-characterization)
-  - [Labs for CMOS inverter ngspice simulations](#labs-for-cmos-inverter-ngspice-simulations)
-    - [Spice deck](#spice-deck)
-    - [CMOS inverter](#cmos-inverter)
-    - [16-mask CMOS process](#16-mask-cmos-process)
-    - [Layout in Magic](#layout-in-magic)
-    - [SPICE Extraction](#spice-extraction)
-    - [Characterization of the inverter](#characterization-of-the-inverter)
-
+    - [Labs for CMOS inverter ngspice simulations](#labs-for-cmos-inverter-ngspice-simulations)
+      - [Spice deck](#spice-deck)
+      - [CMOS inverter](#cmos-inverter)
+      - [16-mask CMOS process](#16-mask-cmos-process)
+      - [Layout in Magic](#layout-in-magic)
+      - [SPICE Extraction](#spice-extraction)
+      - [Characterization of the inverter](#characterization-of-the-inverter)
 4. [Day 4 - Pre-layout timing analysis and importance of good clock tree](#day-4---pre-layout-timing-analysis-and-importance-of-good-clock-tree)
-  - [Inserting custom cell design in OpenLANE](#inserting-custom-cell-design-in-openlane)
-    - [Developing LEF file](#developing-lef-file)
-    - [Integrating custom cell in OpenLANE](#integrating-custom-cell-in-openlane)
-  - [Timing modelling using delay tables](#timing-modelling-using-delay-tables)
-    - [Timing analysis and clock signal](#timing-analysis-and-clock-signal)
-    - [Timing analysis using OpenSTA](#timing-analysis-using-opensta)
-      - [Post-synthesis timing analysis](#post-synthesis-timing-analysis)
-
+    - [Inserting custom cell design in OpenLANE](#inserting-custom-cell-design-in-openlane)
+      - [Developing LEF file](#developing-lef-file)
+      - [Integrating custom cell in OpenLANE](#integrating-custom-cell-in-openlane)
+    - [Timing modelling using delay tables](#timing-modelling-using-delay-tables)
+      - [Timing analysis and clock signal](#timing-analysis-and-clock-signal)
+      - [Timing analysis using OpenSTA](#timing-analysis-using-opensta)
+        - [Post-synthesis timing analysis](#post-synthesis-timing-analysis)
 5. [Final steps for RTL2GDS](#final-steps-for-rtl2gds)
-  - [Routing and DRC](#routing-and-drc)
-  - [Power distribution network (PDN) and routing](#power-distribution-network-pdn-and-routing)
-  - [SPEF Extraction and GDSII Generation](#spef-extraction-and-gdsii-generation)
-  
+    - [Routing and DRC](#routing-and-drc)
+    - [Power distribution network (PDN) and routing](#power-distribution-network-pdn-and-routing)
+    - [SPEF Extraction and GDSII Generation](#spef-extraction-and-gdsii-generation)
 6. [Acknowledgements](#acknowledgements)
 
 
@@ -171,9 +166,7 @@ To calculate the flop ratio using information from the log,
 ![Synthesis log](https://github.com/rafaelfrgc/Sky130-OpenLANE-DesignWorkshop/blob/main/Day1/Images/SynthesisLog.png)
 
 ```
-Flop ratio = Number of D Flip flops 
-             ______________________
-             Total Number of cells
+Flop ratio = Number of D Flip flops/Total number of cells
 ```
 
 ```
@@ -195,15 +188,15 @@ In chip floor planning, it is important to define the width and height of the co
 
 The logical cells occupy the complete area of the core. The utilization factor is calculated by dividing the area occupied by the netlist by the total area of the core. In a practical scenario, the utilization factor is typically between 0.5 and 0.6. If the utilization factor is 1, it means that the design is very dense and there is no space to add more logical cells, which is not good for the design.
 
-Utilization Factor =  Area occupied by netlist
-                     __________________________
-                        Total area of core
+```
+Utilization Factor =  Area occupied by netlist/Total area of the core
+```
 
 The aspect ratio is another important consideration in chip floor planning. It is calculated as the ratio between the width and height of the core area. If the aspect ratio is 1, it means that the core area is a square. However, depending on the design requirements, different aspect ratios may be used.
 
-Aspect Ratio =  Height
-               ________
-                Width
+```
+Aspect Ratio =  Height/Width
+```
 
 
 ### Preplaced cells
